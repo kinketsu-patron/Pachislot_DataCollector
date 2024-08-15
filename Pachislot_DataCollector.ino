@@ -30,7 +30,7 @@ static void end_bb( void );
 // =======================================================
 // 割り込み発生時のコールバック関数
 // =======================================================
-static INTR_CALLBACK _IntrPtr[] = {
+static INTR_CALLBACK m_IntrPtr[] = {
         update_game,
         update_in,
         update_out,
@@ -50,7 +50,7 @@ static INTR_CALLBACK _IntrPtr[] = {
 void setup( void )
 {
         Port_Init( );                 // ポートを初期化する
-        Intr_Init( _IntrPtr );        // 割り込み機能を初期化する
+        Intr_Init( m_IntrPtr );        // 割り込み機能を初期化する
         Serial_Init( );               // シリアル通信を初期化する
         Data_Init( );                 // データ管理を初期化する
 }
@@ -141,13 +141,15 @@ static void begin_rb( void )
 {
         ulong32 l_CurrentRB;
 
-        noInterrupts( );                               // 他の割り込みを禁止する
-        l_CurrentRB = Data_GetRB( );                   // 現在のRB回数を取得する
-        l_CurrentRB++;                                 // 現在のRB回数に+1する
-        Data_SetRB( l_CurrentRB );                     // RB回数を更新する
-        Data_SetDuringRB( true );                      // RB中フラグを立てる
-        Serial_Send( &( Data_GetAllData( ) ) );        // すべてのゲーム情報をPCへ送信する
-        interrupts( );                                 // 他の割り込みを許可する
+        if ( Data_GetDuringBB( ) == false ) {
+                noInterrupts( );                               // 他の割り込みを禁止する
+                l_CurrentRB = Data_GetRB( );                   // 現在のRB回数を取得する
+                l_CurrentRB++;                                 // 現在のRB回数に+1する
+                Data_SetRB( l_CurrentRB );                     // RB回数を更新する
+                Data_SetDuringRB( true );                      // RB中フラグを立てる
+                Serial_Send( &( Data_GetAllData( ) ) );        // すべてのゲーム情報をPCへ送信する
+                interrupts( );                                 // 他の割り込みを許可する
+        }
 }
 
 /**
@@ -159,11 +161,13 @@ static void begin_rb( void )
  */
 static void end_rb( void )
 {
-        noInterrupts( );                               // 他の割り込みを禁止する
-        Data_SetDuringRB( false );                     // RB中フラグを下ろす
-        Data_SetGame( 0U );                            // ゲーム数を0にリセットする
-        Serial_Send( &( Data_GetAllData( ) ) );        // すべてのゲーム情報をPCへ送信する
-        interrupts( );                                 // 他の割り込みを許可する
+        if ( Data_GetDuringBB( ) == false ) {
+                noInterrupts( );                               // 他の割り込みを禁止する
+                Data_SetDuringRB( false );                     // RB中フラグを下ろす
+                Data_SetGame( 0U );                            // ゲーム数を0にリセットする
+                Serial_Send( &( Data_GetAllData( ) ) );        // すべてのゲーム情報をPCへ送信する
+                interrupts( );                                 // 他の割り込みを許可する
+        }
 }
 
 /**

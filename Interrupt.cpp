@@ -17,6 +17,8 @@
 // ローカル変数
 // =======================================================
 static INTR_CALLBACK *m_Func;           // 関数ポインタ配列
+static bool m_IsInRegularBonus;
+static bool m_IsInBigBonus;
 
 // =======================================================
 // ローカル関数
@@ -36,7 +38,9 @@ static void bb_intr_occur( void );
  */
 void Intr_Init( INTR_CALLBACK *p_Func )
 {
-        m_Func = p_Func;        // 関数ポインタ配列のアドレスを受け取る
+        m_Func             = p_Func;        // 関数ポインタ配列のアドレスを受け取る
+        m_IsInRegularBonus = false;
+        m_IsInBigBonus     = false;
 
         // 3番～6番のピンを外部割込みに設定する
         // 割り込み発生は立ち下がりエッジ(FALLING)発生時とする
@@ -126,13 +130,15 @@ static void rb_intr_occur( void )
 
         if ( allow_intrrput( INTR_WAIT, &l_RBPrevtime ) == true )
         {
-                if ( digitalRead( RB_PIN ) == LOW )
+                if ( m_IsInRegularBonus == false )
                 {
                         m_Func[ 3 ]( );        // Func[3]：begin_rb()をコールバックする
+                        m_IsInRegularBonus = true;
                 }
                 else
                 {
                         m_Func[ 4 ]( );        // Func[4]：end_rb()をコールバックする
+                        m_IsInRegularBonus = false;
                 }
         }
 }
@@ -150,13 +156,15 @@ static void bb_intr_occur( void )
 
         if ( allow_intrrput( INTR_WAIT, &l_BBPrevtime ) == true )
         {
-                if ( digitalRead( BB_PIN ) == LOW )
+                if ( m_IsInBigBonus == false )
                 {
                         m_Func[ 5 ]( );        // Func[5]：begin_bb()をコールバックする
+                        m_IsInBigBonus = true;
                 }
                 else
                 {
                         m_Func[ 6 ]( );        // Func[6]：end_bb()をコールバックする
+                        m_IsInBigBonus = false;
                 }
         }
 }
