@@ -24,7 +24,7 @@
 /** @def
  * RB入力ピン:4番ピン
  */
-#define RB_PIN 2U
+#define RB_PIN 4U
 
 /** @def
  * BB入力ピン:3番ピン
