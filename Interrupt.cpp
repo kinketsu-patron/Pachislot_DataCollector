@@ -128,7 +128,7 @@ static void rb_intr_occur( void )
 {
         static ulong32 l_RBPrevtime = 0U;
 
-        if ( allow_intrrput( INTR_WAIT, &l_RBPrevtime ) == true )
+        if ( allow_intrrput( INTR_WAIT_B, &l_RBPrevtime ) == true )
         {
                 if ( m_IsInRegularBonus == false )
                 {
@@ -154,7 +154,7 @@ static void bb_intr_occur( void )
 {
         static ulong32 l_BBPrevtime = 0U;
 
-        if ( allow_intrrput( INTR_WAIT, &l_BBPrevtime ) == true )
+        if ( allow_intrrput( INTR_WAIT_B, &l_BBPrevtime ) == true )
         {
                 if ( m_IsInBigBonus == false )
                 {

@@ -21,6 +21,7 @@
 #include "Serial_Com.h"
 
 #define INTR_WAIT      80U         // 80ms間は次の外部割込みをマスク
+#define INTR_WAIT_B    500U        // 500ms間はボーナスの割り込みをマスク(チャタ防止)
 #define GAMECOUNT_WAIT 500U        // 500ms間待てば3枚掛けの3パルス分は無視できる
 
 // =======================================================
